@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -28,14 +29,60 @@ string leerArchivo(const string &name)
 
 string subsecuencias(const string &trans, const string &mcode)
 {
+    // Verificamos si ambas cadenas tienen texto
+    if (trans.size() == 0 || mcode.size() == 0)
+        return "false";
+
+    vector<int> fallo(mcode.size(), -1);
+
+    int l = -1;
+    for (int r = 1; r < mcode.size(); r++)
+    {
+
+        while (l != -1 && mcode[l + 1] != mcode[r])
+        {
+            l = fallo[l];
+        }
+
+        if (mcode[l + 1] == mcode[r])
+        {
+            fallo[r] = ++l;
+        }
+    }
+
+    // Step 2. Search pattern
+    int cola = -1;
+    for (int i = 0; i < trans.size(); i++)
+    {
+
+        while (cola != -1 && trans[i] != mcode[cola + 1])
+        {
+            cola = fallo[cola];
+        }
+
+        if (trans[i] == mcode[cola + 1])
+        {
+            cola++;
+        }
+
+        if (cola == mcode.size() - 1)
+        {
+            string result(to_string(i - cola + 1));
+            return "true " + result;
+        }
+    }
+
+    return "false";
 }
 
 string palindromo(const string &trans)
 {
+    return "something";
 }
 
 string substring(const string &trans1, const string &trans2)
 {
+    return "something";
 }
 
 int main()
