@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
+#include <string.h>
 #include <fstream>
 #include <vector>
-
 using namespace std;
 
 string leerArchivo(const string &name)
@@ -75,14 +75,71 @@ string subsecuencias(const string &trans, const string &mcode)
     return "false";
 }
 
+string preProcesamiento(string &trans){
+    int length=trans.size();
+    string str;
+    str.push_back('#');
+    for(int i=0;i<length;i++){
+        str.push_back(trans[i]);
+        str.push_back('#');
+    }
+
+    return str;
+}
+/*
+string postProcesamiento(string palin){
+    int length=palin.length();
+    string str;
+    for(int i=0;i<length;i++){
+        if(palin[i] != '#'){
+            str.push_back(palin[i]);
+        }
+    }
+    return str;
+}*/
+
 string palindromo(const string &trans)
 {
-    return "something";
+    string str=trans;
+    str=preProcesamiento(str);
+    int length=str.length();
+    int p[length];//array para guardar longitudes de palindromos en cada prueba
+
+    int c=0;//variable para llevar un centro
+    int r=0;
+
+    for(int i=0;i<length;i++){
+        int i_mirror =c-(i-c);
+        if(r>i){
+            p[i]=min(r-i,p[i_mirror]);
+        }else{
+            p[i]=0;
+        }
+        while(str[i+1+p[i]]==str[i-1-p[i]]){
+            p[i]++;
+        }
+
+        if(i+p[1]>r){
+            c=1;
+            r=i+p[i];
+        }
+    }
+    int maxLen=0;
+    int centerIndex=0;
+    
+    for(int i=1;i<length-1;i++){
+        if(p[i]>maxLen){
+            maxLen= p[i]; 
+            centerIndex=i;
+        }
+    }
+    string respuesta=to_string((centerIndex-maxLen)/2)+" "+to_string(((centerIndex-maxLen)/2)+maxLen-1);
+    return respuesta;
 }
 
 string substring(const string &trans1, const string &trans2)
 {
-    return "something";
+     return "something";
 }
 
 int main()
