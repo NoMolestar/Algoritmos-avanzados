@@ -1,7 +1,9 @@
 Actividades:
 - Luis Armando Salazar Lopez A01114901:
-
-
+Investigar como funciona el algoritmo de Manacher para implementarlo en el codigo y asi tener 
+una función que busque el palindromo más grande en un string.
+Definición de partes de los archivos de transmission.txt para tener casos de prueba utiles que incluyan distintos palindromos
+Revisar que no existieran más errores despues de encontrar un error que aparecia de vez en cuando en la funcion "palindromo" causada por los espacios de memoria que tomo una lista
 - Carlos Moises Chavez Jimenez A01637322:
 
 

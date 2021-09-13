@@ -12,7 +12,7 @@ Carlos Moises Chavez Jimenez A01637322
 
 using namespace std;
 
-//Funcion que lee un archivo de texto (recibiendo el nombre como parametro) y regresa
+//Funcion que lee un archivo de texto (recibe el nombre como parametro) y regresa
 //el string completo del contenido del archivo.
 //Complejidad: O(n) donde n es el número de caracteres del archivo.
 string leerArchivo(const string &name)
@@ -20,7 +20,7 @@ string leerArchivo(const string &name)
     ifstream file;
     string renglon;
     string texto;
-    file.open(name, ios::in); //Intruccion que lee un archivo de texto.
+    file.open(name, ios::in); //Instruccion que lee un archivo de texto.
     if (file.fail())
     { //Si no encuentra el archivo, regresa un mensaje de error.
         cout << "No se pudo abrir el archivo";
@@ -92,10 +92,10 @@ string subsecuencias(const string &trans, const string &mcode)
     //Si nunca encuentra el patro, regresa falso
     return "false";
 }
-
-string preProcesamiento(string &trans)
+//complejidad O(n), n es el tamanio del string
+string preProcesamiento(string &trans)//funcion que vuelve el parametro ingresado en un string impar al insertar '#' en los extremos y en medio de cada caracter
 {
-    int length = trans.size();
+    int length = trans.length();
     string str;
     str.push_back('#');
     for (int i = 0; i < length; i++)
@@ -106,23 +106,37 @@ string preProcesamiento(string &trans)
 
     return str;
 }
+//complejidad O(n), n es el tamanio del string
+string postProcesamiento(string &trans){//funcion que elimina todos los caracteres '#' de un string dado
+    int length= trans.length();
+    string str;
+    for (int i=0;i<length;i++){
+        if(trans[i]!='#'){
+            str.push_back(trans[i]);
+        }
+    }
+    return str;
+}
 
-string palindromo(const string &trans)
+string palindromo(const string &trans)//algoritmo de manacher para encontrar el palindromo mas grande de un string. complejidad O(n)
 {
-    string str = trans;
-    str = preProcesamiento(str);
+    string str = trans;//
+    str = preProcesamiento(str);//volvemos impar el string sin importar si ya era impar
     int length = str.length();
-    vector<int> p(length); //array para guardar longitudes de palindromos en cada prueba
 
+    vector<int> p(length); //vector para guardar longitudes de palindromos en cada prueba
     int c = 0; //variable para llevar un centro
-    int r = 0;
-
-    for (int i = 0; i < length; i++)
+    int r = 0; //variable para guardar el extremo derecho
+    for (int i = 0; i < length; i++) // ciclo for utilizado para buscar los tamanios de los palindromos dentro del parametro dado
     {
         int i_mirror = c - (i - c);
         if (r > i)
         {
-            p[i] = min(r - i, p[i_mirror]);
+            if(p[i_mirror]<-1 || p[i_mirror]>length){// "if" para evitar errores causados por el p[i_mirror]
+                p[i]=r-i;
+            }else{
+                p[i] = min(r - i, p[i_mirror]);
+            }
         }
         else
         {
@@ -132,7 +146,6 @@ string palindromo(const string &trans)
         {
             p[i]++;
         }
-
         if (i + p[1] > r)
         {
             c = 1;
@@ -141,8 +154,7 @@ string palindromo(const string &trans)
     }
     int maxLen = 0;
     int centerIndex = 0;
-
-    for (int i = 1; i < length - 1; i++)
+    for (int i = 1; i < length - 1; i++)//ciclo utilizado para encontrar el centro y tamanio del palindromo mas grande
     {
         if (p[i] > maxLen)
         {
@@ -151,6 +163,10 @@ string palindromo(const string &trans)
         }
     }
     string respuesta = to_string((centerIndex - maxLen) / 2 + 1) + " " + to_string(((centerIndex - maxLen) / 2) + maxLen);
+    
+    str=postProcesamiento(str);
+    //cout<<str<<endl;
+    //str.substr((centerIndex - maxLen) / 2,(((centerIndex - maxLen) / 2) + maxLen)-((centerIndex - maxLen) / 2 + 1)+1);
     return respuesta;
 }
 
@@ -232,10 +248,11 @@ int main()
     cout << subSec << endl;
     subSec = subsecuencias(trans2, mcode3);
     cout << subSec << endl;
-    string pal = palindromo(trans1);
-    cout << pal << endl;
-    pal = palindromo(trans2);
-    cout << pal << endl;
+    string pal1 = palindromo(trans1);
+    cout << pal1 << endl;
+    string pal2;
+    pal2= palindromo(trans2);
+    cout << pal2 << endl;
     string subCadena = substring(trans1, trans2);
     cout << subCadena << endl;
     return 0;
