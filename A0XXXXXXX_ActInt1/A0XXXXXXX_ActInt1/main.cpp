@@ -39,7 +39,7 @@ string leerArchivo(const string &name)
 
 //Funcion que recibe el string de transmision y el string de mcode como parametros, y
 //busca el patron de string de mcode dentro del string de transmision
-//Complejidad: O(n + m) donde n y m son los caracteres de ambas cadenas que se recibio de parametro.
+//Complejidad: O(n + m) donde n y m son los caracteres de ambas cadenas que se recibieron de parametro.
 string subsecuencias(const string &trans, const string &mcode)
 {
     // Verificamos si ambas cadenas tienen texto
