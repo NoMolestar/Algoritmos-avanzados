@@ -21,47 +21,58 @@ void imprimir(int n, vector<vector<int>> &final)
         cout << endl;
     }
 }
-int INF=999999;
+int INF = 999999;
 //Complejidad: O(n^2) donde n es la cantidad de vertices
-void algDijkstra(int n, vector<vector<int>> &matriz,int source)
+void algDijkstra(int n, vector<vector<int>> &matriz, int source)
 {
-    vector<vector<int>> resultados=matriz;
-    vector<int>visitados(n,0);//vector para saber que vertices ya se han visitado
-    vector<int>recorrido(n,INF);
-    bool inicio=true;//establecemos una variable booleana de inicio para saber si podemos agregar la distancia al source
-    int i=source;//indicador de en que vertice se revisan las conexiones
-    int v=0;//distancia al source
-    int count=0;//contador para saber cuando hemos visitado todos los vertices
-    while(count<n){       
-        visitados[i]=1; 
-        if(inicio){
-            inicio=false;
-        }else{
-            v=recorrido[i];
+    vector<vector<int>> resultados = matriz;
+    vector<int> visitados(n, 0); //vector para saber que vertices ya se han visitado
+    vector<int> recorrido(n, INF);
+    bool inicio = true; //establecemos una variable booleana de inicio para saber si podemos agregar la distancia al source
+    int i = source;     //indicador de en que vertice se revisan las conexiones
+    int v = 0;          //distancia al source
+    int count = 0;      //contador para saber cuando hemos visitado todos los vertices
+    while (count < n)
+    {
+        visitados[i] = 1;
+        if (inicio)
+        {
+            inicio = false;
         }
-        
-        for(int j=0;j<n;j++){//funcion para actualizar los recorridos que se encuentren o se encuentren en menor peso(relaxation)
-            if(i!=j && j!=source){
-                if((resultados[i][j]+v)<recorrido[j] && resultados[i][j]>=0 ){
-                    recorrido[j]=resultados[i][j]+v;
+        else
+        {
+            v = recorrido[i];
+        }
+
+        for (int j = 0; j < n; j++)
+        { //funcion para actualizar los recorridos que se encuentren o se encuentren en menor peso(relaxation)
+            if (i != j && j != source)
+            {
+                if ((resultados[i][j] + v) < recorrido[j] && resultados[i][j] >= 0)
+                {
+                    recorrido[j] = resultados[i][j] + v;
                 }
             }
         }
-        int min=INF;
-        for(int h=0;h<n;h++){//funcion para encontrar la distancia menor y no visitada
+        int min = INF;
+        for (int h = 0; h < n; h++)
+        { //funcion para encontrar la distancia menor y no visitada
 
-            if(visitados[h]==0 && recorrido[h]<min){
-                min=recorrido[h];
-                i=h;
+            if (visitados[h] == 0 && recorrido[h] < min)
+            {
+                min = recorrido[h];
+                i = h;
             }
         }
         count++;
     }
 
     //imprimir recorrido
-    for(int k=0;k<n;k++){
-        if(k!=source && recorrido[k]!=INF){
-            cout<<"node "<<source+1<<" to node "<<k+1<<" : "<<recorrido[k]<<endl;
+    for (int k = 0; k < n; k++)
+    {
+        if (k != source && recorrido[k] != INF)
+        {
+            cout << "node " << source + 1 << " to node " << k + 1 << " : " << recorrido[k] << endl;
         }
     }
 }
@@ -124,11 +135,14 @@ int main()
         col.clear();
     }
     //Pasamos la matriz a las funciones correspondientes
-    cout<<"Dijkstra :"<<endl;
-    for(int i=0;i<n;i++){
-        algDijkstra(n,row,i);
+    cout << endl
+         << "Dijkstra :" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        algDijkstra(n, row, i);
     }
-    cout << "Floyd :" << endl;
+    cout << endl
+         << "Floyd :" << endl;
     algFloyd(n, row);
     return 0;
 }
