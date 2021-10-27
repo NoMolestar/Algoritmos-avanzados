@@ -1,0 +1,13 @@
+Actividades:
+- Luis Armando Salazar Lopez A01114901:
+Investigar como funciona el algoritmo de Manacher para implementarlo en el codigo y asi tener 
+una función que busque el palindromo más grande en un string.
+Definición de partes de los archivos de transmission.txt para tener casos de prueba utiles que incluyan distintos palindromos
+Revisar que no existieran más errores despues de encontrar un error que aparecia de vez en cuando en la funcion "palindromo" causada por los espacios de memoria que tomo una lista
+
+- Carlos Moises Chavez Jimenez A01637322:
+Investigar el funcionamiento del algoritmo Knuth-Morris-Pratt. Este algoritmo nos permite disminuir la complejidad (comparado con fuerza bruta) al ver la existencia
+de un string dentro de otro. Sabiendo de su funcionamiento, implementé la función que ve la existencia de una cadena dentro de otra.
+Investigué el funcionamiento y uso de las tablas suffix, para encontrar la cadena comun más larga entre dos archivos. Y así implementar la función que realiza esta acción.
+Implementé la función que recibe los nombres de los archivos de texto, los ubica, toma el texto dentro de ellos y los guarda dentro de un string.
+
