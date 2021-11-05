@@ -109,7 +109,7 @@ void points_triangulation()
         glEnd();
     } // Complete el dibujo de la triangulación de Delaunay, diagrama de Delaunay
 
-    cout << "(Parte Delaunay) Se dibujaron un total de " << dt.number_of_faces() << " caras." << endl
+    cout << "- (Parte Delaunay) Se dibujaron un total de " << dt.number_of_faces() << " caras." << endl
          << endl;
 
     Delaunay ::Edge_iterator eit; // Iterar sobre todos los bordes de Delaunay, dibujar un gráfico dual del gráfico de Delaunay, es decir, el gráfico de Voronoi
@@ -142,8 +142,6 @@ void points_triangulation()
     glPopMatrix();
     glutSwapBuffers();
 
-    cout << "Triangulacion completada con estado: 1." << endl
-         << endl;
     tri_state = 1; // triangulación completa, establecer el estado en 1
 }
 
@@ -186,8 +184,9 @@ void mouse(int button, int state, int x, int y)
             //points_add_point(x,y);
             read_file();
             points_triangulation();
+            cout << "- Triangulacion completada." << endl;
             points_draw();
-            cout << "Se dibujaron los puntos satisfactoriamente." << endl;
+            cout << "- Se dibujaron los puntos satisfactoriamente." << endl;
         }
     }
     if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)

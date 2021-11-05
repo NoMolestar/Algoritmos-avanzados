@@ -4,6 +4,14 @@
 
 ## Carlos Moises Chavez Jimenez A01637322
 
+### Comentarios del programa
+
+En el codigo de Python solamente fue cuestión de instalar las librerías correspondientes, y el programa se ejecuto sin
+ningún problema. Se recibio de entrada una fotografia, y se devuelve un archivo de texto con las coordenadas de los puntos
+que deben ser dibujados. Ahora bien, hablado del código de C++. El programa recibe un archivo con extencion .txt de entrada,
+y debe mostrar las caras dibujadas. En este caso, no se muestran gráficamente los resultados, pero sí se imprime la cantidad
+de puntos que se rescato del archivo de texto. Y también se muestra la cantidad de caras que deberian haberse dibujado.
+
 ### Primer Caso de Prueba
 
 504 160
@@ -222,3 +230,13 @@
 1377 499
 
 #### Explicación: Imagen de otro jugador en diferente posicion y fondo
+
+### Resultados
+
+- Programa corriendo
+
+<img src="Result1.PNG" />
+
+- Resultados del programa
+
+<img src="Result2.PNG">
