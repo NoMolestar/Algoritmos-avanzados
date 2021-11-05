@@ -30,8 +30,8 @@ void imprimir(vector<vector<int>> &final, int m)
 
 int INF = 999999;
 
-//Funcion 1
-//Complejidad: O()
+//Funcion 1 : Algoritmo Dijkstra
+//Complejidad: O(n^2) donde n es la cantidad de vertices
 void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
 {
     //Complejidad: O(n^2) donde n es la cantidad de vertices
@@ -88,57 +88,68 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
     }
 }
 
-//Función auxiliar que utiliza recursividad para regresar el número de valores de la mochila correspondientes
-//con el peso de los elementos y el peso maximo.
-//Complejidad: 0(2^n) siendo n el numero de elementos en la mochila.
-int auxMochila(vector<int> &valores, vector<int> &pesos, int pesoMax, int size)
+int minDistance(int dist[], bool sptSet[])
 {
-    //Si el peso maximo es más pequeño que cero, regresamos un número negativo grande para indicar
-    //que se ha superado el limite de peso.
-    if (pesoMax < 0)
-    {
-        return -9999999;
-    }
-    //Si se ha alcanzado el limite de peso, o bien, se ha alcanzado el total de numero de elementos, se regresa 0.
-    if (size < 0 || pesoMax == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        //Agregamos el valor a la mochila y le sumamos el valor que sigue en el vector llamando a la funcion
-        //recursivamente. Esto restandole el peso del valor agregado al peso maximo.
-        int agregado = valores[size] + auxMochila(valores, pesos, pesoMax - pesos[size], size - 1);
-        //A la par de lo anterior, ignoramos el valor actual y no lo agregamos. Pasamos al siguiente valor
-        //enviandolo a la recursividad.
-        int noAgregado = auxMochila(valores, pesos, pesoMax, size - 1);
-        //Al final comparamos los resultados de ambos procesos recursivos para obtener el máximo de los valores que
-        //se obtuvieron dentro de la mochila y sin superar el peso maximo.
-        return max(agregado, noAgregado);
-    }
+
+    // Initialize min value
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < 4; v++)
+        if (sptSet[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+
+    return min_index;
 }
 
-//Función principal que mandá llamar a la auxiliar que será la que regresará los valores dentro
-//de la mochila.
-//Complejidad O(1).
-void mochila(vector<int> &valores, vector<int> &pesos, int pesoMax, int size)
+void printSolution(int dist[])
 {
-    //Si el numero de valores es 0, o bien, el peso maximo es 0. Entonces solo imprimimos el 0
-    if (size == 0 || pesoMax == 0)
-    {
-        cout << "0" << endl;
-    }
-    else
-    {
-        //Llamamos a la funcion auxiliar que nos permitira la recursividad
-        cout << endl
-             << auxMochila(valores, pesos, pesoMax, size - 1) << endl;
-    }
+    cout << "Vertex \t Distance from Source" << endl;
+    for (int i = 0; i < 4; i++)
+        cout << i << " \t\t" << dist[i] << endl;
 }
 
-//Funcion 2
-//Complejidad: O()
+//Funcion 2 : Algoritmo Floyd
+//Complejidad: O(n^3) donde n es el número de vertices del grafo
 void rutaFun2(vector<vector<int>> &matriz, int n)
+{
+    int dist[n]; // The output array.  dist[i] will hold the shortest
+    // distance from src to i
+
+    bool sptSet[n]; // sptSet[i] will be true if vertex i is included in shortest
+    // path tree or shortest distance from src to i is finalized
+
+    // Initialize all distances as INFINITE and stpSet[] as false
+    for (int i = 0; i < n; i++)
+        dist[i] = INT_MAX, sptSet[i] = false;
+
+    // Distance of source vertex from itself is always 0
+    dist[0] = 0;
+
+    // Find shortest path for all vertices
+    for (int count = 0; count < n - 1; count++)
+    {
+        // Pick the minimum distance vertex from the set of vertices not
+        // yet processed. u is always equal to src in the first iteration.
+        int u = minDistance(dist, sptSet);
+
+        // Mark the picked vertex as processed
+        sptSet[u] = true;
+
+        // Update dist value of the adjacent vertices of the picked vertex.
+        for (int v = 0; v < n; v++)
+
+            // Update dist[v] only if is not in sptSet, there is an edge from
+            // u to v, and total weight of path from src to  v through u is
+            // smaller than current value of dist[v]
+            if (!sptSet[v] && matriz[u][v] && dist[u] != INT_MAX && dist[u] + matriz[u][v] < dist[v])
+                dist[v] = dist[u] + matriz[u][v];
+    }
+    printSolution(dist);
+}
+
+//Funcion 3
+//Complejidad: O(n^3) donde n es el número de vertices del grafo
+void flujoFun3(vector<vector<int>> &matriz, int n)
 {
     for (int i = 0; i < n; i++)
     {
@@ -165,12 +176,6 @@ void rutaFun2(vector<vector<int>> &matriz, int n)
         }
     }
     imprimir(matriz, n);
-}
-
-//Funcion 3
-//Complejidad: O()
-void flujoFun3(vector<vector<int>> &datos, int n)
-{
 }
 
 //Funcion que lee un archivo de texto (recibe el nombre como parametro) y regresa

@@ -10,17 +10,19 @@
 //SudoLeo 2010/7/20
 //CGAL required, GLUT required
 
+//#include <CGAL/Triangulation_euclidean_traits_xy_3.h> Esta libreria nos arrojo errores
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <GLUT/glut.h>
+#include <GL/glut.h>
 #include <iostream>
 #include <cmath>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
 typedef Delaunay::Vertex_handle Vertex_handle;
+
+using namespace std;
 
 typedef K::Point_2 Point;
 
@@ -29,6 +31,7 @@ std::vector<Point> vertices;
 int global_w, global_h;
 int tri_state = 0;
 
+//Complejidad: O(n) siendo n el numero de vertices.
 void points_draw()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -46,11 +49,13 @@ void points_draw()
     glutSwapBuffers();
 }
 
+//Complejidad: O(1)
 void points_add_point(int x, int y)
 {
     vertices.push_back(Point(x, global_h - y));
 }
 
+//Complejidad: O(1)
 void points_clear()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -62,20 +67,26 @@ void points_clear()
     tri_state = 0;
 }
 
+//Complejidad: O(n) siendo n el numero de lineas del archivo a leer.
 void read_file() // Leer datos del conjunto de puntos de un archivo, utilizado durante la depuración
 {
     FILE *f;
-    f = freopen("data.txt", "r", stdin);
+    f = freopen("case1.txt", "r", stdin);
 
     int a, b;
     while (std::cin >> a >> b)
     {
         vertices.push_back(Point(a, b));
     }
+    cout << endl
+         << "- Archivo leido con exito: " << endl;
+    cout << "- Se leyeron en total " << vertices.size() << " vertices." << endl
+         << endl;
 
     fclose(f);
 }
 
+//Complejidad: O(2n) siendo n la cantidad de vertices ingresados a la estructura dt.
 void points_triangulation()
 {
     Delaunay dt; // Estructura de datos de Delaunay, que representa una y solo una triangulación de los datos actuales, consulte CGAL_manual para obtener detalles.
@@ -97,6 +108,9 @@ void points_triangulation()
         glVertex2i(fit->vertex(2)->point().hx(), fit->vertex(2)->point().hy());
         glEnd();
     } // Complete el dibujo de la triangulación de Delaunay, diagrama de Delaunay
+
+    cout << "(Parte Delaunay) Se dibujaron un total de " << dt.number_of_faces() << " caras." << endl
+         << endl;
 
     Delaunay ::Edge_iterator eit; // Iterar sobre todos los bordes de Delaunay, dibujar un gráfico dual del gráfico de Delaunay, es decir, el gráfico de Voronoi
 
@@ -128,6 +142,8 @@ void points_triangulation()
     glPopMatrix();
     glutSwapBuffers();
 
+    cout << "Triangulacion completada con estado: 1." << endl
+         << endl;
     tri_state = 1; // triangulación completa, establecer el estado en 1
 }
 
@@ -135,12 +151,14 @@ void display(void)
 {
 }
 
+//Complejidad: O(1)
 void init(void)
 {
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
 }
 
+//Complejidad: O(1)
 void reshape(int w, int h)
 {
     global_w = w;
@@ -156,6 +174,7 @@ void reshape(int w, int h)
     glLoadIdentity();
 }
 
+//Complejidad: O(1)
 void mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
@@ -166,7 +185,9 @@ void mouse(int button, int state, int x, int y)
         {
             //points_add_point(x,y);
             read_file();
+            points_triangulation();
             points_draw();
+            cout << "Se dibujaron los puntos satisfactoriamente." << endl;
         }
     }
     if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
@@ -178,6 +199,7 @@ void mouse(int button, int state, int x, int y)
     }
 }
 
+//Complejidad: O(1)
 void keyboard(unsigned char key, int x, int y)
 {
     switch (key)

@@ -1,0 +1,3 @@
+/mnt/c/Users/carlo/documents/github/algoritmos-avanzados/A01114901-A01637322_Act5.1/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/carlo/documents/github/algoritmos-avanzados/A01114901-A01637322_Act5.1/CMakeFiles/edit_cache.dir
+/mnt/c/Users/carlo/documents/github/algoritmos-avanzados/A01114901-A01637322_Act5.1/CMakeFiles/main.dir
