@@ -4,6 +4,9 @@ Actividad Integradora 2
 Luis Armando Salazar Lopez A01114901
 Carlos Moises Chavez Jimenez A01637322
 */
+
+/*La ultima funcion (4) del programa la realizamos en un archivo de python por separado*/
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -112,70 +115,6 @@ void printSolution(int dist[])
 //Complejidad: O(n^3) donde n es el número de vertices del grafo
 void rutaFun2(vector<vector<int>> &matriz, int n)
 {
-    int dist[n]; // The output array.  dist[i] will hold the shortest
-    // distance from src to i
-
-    bool sptSet[n]; // sptSet[i] will be true if vertex i is included in shortest
-    // path tree or shortest distance from src to i is finalized
-
-    // Initialize all distances as INFINITE and stpSet[] as false
-    for (int i = 0; i < n; i++)
-        dist[i] = INT_MAX, sptSet[i] = false;
-
-    // Distance of source vertex from itself is always 0
-    dist[0] = 0;
-
-    // Find shortest path for all vertices
-    for (int count = 0; count < n - 1; count++)
-    {
-        // Pick the minimum distance vertex from the set of vertices not
-        // yet processed. u is always equal to src in the first iteration.
-        int u = minDistance(dist, sptSet);
-
-        // Mark the picked vertex as processed
-        sptSet[u] = true;
-
-        // Update dist value of the adjacent vertices of the picked vertex.
-        for (int v = 0; v < n; v++)
-
-            // Update dist[v] only if is not in sptSet, there is an edge from
-            // u to v, and total weight of path from src to  v through u is
-            // smaller than current value of dist[v]
-            if (!sptSet[v] && matriz[u][v] && dist[u] != INT_MAX && dist[u] + matriz[u][v] < dist[v])
-                dist[v] = dist[u] + matriz[u][v];
-    }
-    printSolution(dist);
-}
-
-//Funcion 3
-//Complejidad: O(n^3) donde n es el número de vertices del grafo
-void flujoFun3(vector<vector<int>> &matriz, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            for (int k = 0; k < n; k++)
-            {
-                //Filtramos las celdas que marcan infinito porque indican que no hay arista entre los vertices.
-                if (matriz[j][i] != -1 && matriz[i][k] != -1)
-                {
-                    //Sumamos el peso de dos aristas conectadas para verificar si la sumatoria es menor
-                    //al peso que está marcado en la celda objetivo.
-                    //Nota: En caso de que la celda a compoarar este marcada como infinito, directamente se
-                    //va a sustituir con la sumatoria. Esto porque la condicional if anterior nos inidico
-                    //que existe un camino con más de una arista hacia el vertice objetivo.
-                    if ((matriz[j][i] + matriz[i][k] < matriz[j][k]) || matriz[j][k] == -1)
-                    {
-                        //Si el peso que se obtiene de la suma de ambas aristas es menor al marcado en la celda,
-                        //entonces se subsituye por la sumatoria.
-                        matriz[j][k] = matriz[j][i] + matriz[i][k];
-                    }
-                }
-            }
-        }
-    }
-    imprimir(matriz, n);
 }
 
 //Funcion que lee un archivo de texto (recibe el nombre como parametro) y regresa
@@ -226,11 +165,6 @@ void leerArchivo(const string &name)
             capacidad.push_back(aux); //Agregamos el vector a la matriz principal
             aux.clear();              //Dejamos el vector en blanco
         }
-        for (int i = 0; i < colonias; i++)
-        {
-            getline(file, renglon); //Obtiene cadenas de cada renglon.
-            coordenadas.push_back(renglon);
-        }
     }
     file.close(); //Cierra el archivo
     for (int i = 0; i < colonias; i++)
@@ -238,8 +172,7 @@ void leerArchivo(const string &name)
         cableadoFun1(colonias, distancia, i);
     }
     //Llamamos a la funcion que mostrara el cableado de las colonias
-    rutaFun2(distancia, colonias);  //Llamamos a la funcion que muestra la ruta a seguir por el personal
-    flujoFun3(capacidad, colonias); //Llamamos a la funcion que muestra el valor del flujo maximo
+    rutaFun2(distancia, colonias); //Llamamos a la funcion que muestra la ruta a seguir por el personal
 }
 
 int main()
