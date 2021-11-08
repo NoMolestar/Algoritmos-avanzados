@@ -14,6 +14,8 @@ Carlos Moises Chavez Jimenez A01637322
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <limits.h>
+#include <queue>
 
 using namespace std;
 
@@ -80,7 +82,6 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
         }
         count++;
     }
-
     //imprimir recorrido
     for (int k = 0; k < n; k++)
     {
@@ -91,30 +92,79 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
     }
 }
 
-int minDistance(int dist[], bool sptSet[])
+//Algoritmo Agente Viajero
+//Complejidad: O()
+void rutaFun2(int n, vector<vector<int>> &distancia, int source)
 {
-
-    // Initialize min value
-    int min = INT_MAX, min_index;
-
-    for (int v = 0; v < 4; v++)
-        if (sptSet[v] == false && dist[v] <= min)
-            min = dist[v], min_index = v;
-
-    return min_index;
 }
 
-void printSolution(int dist[])
+//Funcion auxiliar que regresa
+//Complejidad: O(n) donde n es el numero de vertices del grafo.
+bool auxFun3(vector<vector<int>> &rGraph, int s, int t, vector<int> &parent, int n)
 {
-    cout << "Vertex \t Distance from Source" << endl;
-    for (int i = 0; i < 4; i++)
-        cout << i << " \t\t" << dist[i] << endl;
+    vector<bool> visited(n, 0);
+    queue<int> q;
+    q.push(s);
+    visited[s] = true;
+    parent[s] = -1;
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+        for (int v = 0; v < n; v++)
+        {
+            if (visited[v] == false && rGraph[u][v] > 0)
+            {
+                if (v == t)
+                {
+                    parent[v] = u;
+                    return true;
+                }
+                q.push(v);
+                parent[v] = u;
+                visited[v] = true;
+            }
+        }
+    }
+    return false;
 }
 
-//Funcion 2 : Algoritmo Floyd
+//Funcion 3 : Algoritmo Ford-Fulkerson
 //Complejidad: O(n^3) donde n es el número de vertices del grafo
-void rutaFun2(vector<vector<int>> &matriz, int n)
+void flujoFun3(vector<vector<int>> &graph, int s, int t, int n)
 {
+    int u;
+    int v;
+    vector<int> minGraph(n, 0);
+    vector<vector<int>> rGraph(n, minGraph);
+    for (u = 0; u < n; u++)
+    {
+        for (v = 0; v < n; v++)
+        {
+            rGraph[u][v] = graph[u][v];
+        }
+    }
+    vector<int> parent(n, 0);
+    int max_flow = 0;
+    while (auxFun3(rGraph, s, t, parent, n))
+    {
+        int path_flow = INF;
+        for (v = t; v != s; v = parent[v])
+        {
+            u = parent[v];
+            path_flow = min(path_flow, rGraph[u][v]);
+        }
+        for (v = t; v != s; v = parent[v])
+        {
+            u = parent[v];
+            rGraph[u][v] -= path_flow;
+            rGraph[v][u] += path_flow;
+        }
+        max_flow += path_flow;
+    }
+    cout << endl
+         << "- Funcion 3" << endl;
+    cout << "El flujo maximo es: " << max_flow << endl;
 }
 
 //Funcion que lee un archivo de texto (recibe el nombre como parametro) y regresa
@@ -167,12 +217,15 @@ void leerArchivo(const string &name)
         }
     }
     file.close(); //Cierra el archivo
+    cout << endl
+         << "- Funcion 1" << endl;
     for (int i = 0; i < colonias; i++)
     {
         cableadoFun1(colonias, distancia, i);
     }
     //Llamamos a la funcion que mostrara el cableado de las colonias
-    rutaFun2(distancia, colonias); //Llamamos a la funcion que muestra la ruta a seguir por el personal
+    //rutaFun2(distancia, colonias); //Llamamos a la funcion que muestra la ruta a seguir por el personal
+    flujoFun3(capacidad, 0, colonias - 1, colonias);
 }
 
 int main()
