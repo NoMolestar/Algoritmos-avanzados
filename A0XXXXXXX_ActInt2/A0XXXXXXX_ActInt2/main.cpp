@@ -19,6 +19,8 @@ Carlos Moises Chavez Jimenez A01637322
 
 using namespace std;
 
+const int INF = 999999;
+
 //Función que imprime la matriz resuelta completa. Recibe la matriz y sus dimensiones
 //Complejidad: O(n) siendo n cada nodo de la matriz.
 void imprimir(vector<vector<int>> &final, int m)
@@ -32,8 +34,6 @@ void imprimir(vector<vector<int>> &final, int m)
         cout << endl;
     }
 }
-
-int INF = 999999;
 
 //Funcion 1 : Algoritmo Dijkstra
 //Complejidad: O(n^2) donde n es la cantidad de vertices
@@ -98,73 +98,87 @@ void rutaFun2(int n, vector<vector<int>> &distancia, int source)
 {
 }
 
-//Funcion auxiliar que regresa
+//Funcion auxiliar que verifica si existe un camino entre el nodo s y el nodo t.
+//Se guarda ese camino en el vector parent.
 //Complejidad: O(n) donde n es el numero de vertices del grafo.
-bool auxFun3(vector<vector<int>> &rGraph, int s, int t, vector<int> &parent, int n)
+bool auxFun3(vector<vector<int>> &rGraph, int s, int t, vector<int> &padre, int n)
 {
-    vector<bool> visited(n, 0);
+    //Lista de nodos visitados
+    vector<bool> visitado(n, 0);
     queue<int> q;
     q.push(s);
-    visited[s] = true;
-    parent[s] = -1;
+    visitado[s] = true;
+    padre[s] = -1;
     while (!q.empty())
     {
         int u = q.front();
         q.pop();
         for (int v = 0; v < n; v++)
         {
-            if (visited[v] == false && rGraph[u][v] > 0)
+            if (visitado[v] == false && rGraph[u][v] > 0)
             {
                 if (v == t)
                 {
-                    parent[v] = u;
+                    //Si encontramos conexión con el nodo final
+                    //Regresamos verdadero
+                    padre[v] = u;
                     return true;
                 }
                 q.push(v);
-                parent[v] = u;
-                visited[v] = true;
+                padre[v] = u;
+                visitado[v] = true;
             }
         }
     }
+    //Si terminamos la cola y no encontramos conexion
+    //Regresamos falso.
     return false;
 }
 
 //Funcion 3 : Algoritmo Ford-Fulkerson
+//Regresa el flujo maximo entre el nodo inicial (s) y el final (t)
 //Complejidad: O(n^3) donde n es el número de vertices del grafo
-void flujoFun3(vector<vector<int>> &graph, int s, int t, int n)
+void flujoFun3(vector<vector<int>> &grafo, int s, int t, int n)
 {
     int u;
     int v;
-    vector<int> minGraph(n, 0);
-    vector<vector<int>> rGraph(n, minGraph);
+    //Creamos un grafo auxiliar para trabajar sobre el
+    vector<int> minGrafo(n, 0);
+    vector<vector<int>> rGraph(n, minGrafo);
+    //Llenamos el grafo auxiliar con los mismos valores del grafo principal
     for (u = 0; u < n; u++)
     {
         for (v = 0; v < n; v++)
         {
-            rGraph[u][v] = graph[u][v];
+            rGraph[u][v] = grafo[u][v];
         }
     }
-    vector<int> parent(n, 0);
-    int max_flow = 0;
-    while (auxFun3(rGraph, s, t, parent, n))
+    vector<int> padre(n, 0);
+    //Inicializamos el flujo maximo en 0
+    int flujoMax = 0;
+    while (auxFun3(rGraph, s, t, padre, n))
     {
-        int path_flow = INF;
-        for (v = t; v != s; v = parent[v])
+        //Encuentra el flujo maximo posible dentro
+        //del camino establecido del nodo inicial al final
+        int flujoRuta = INF;
+        for (v = t; v != s; v = padre[v])
         {
-            u = parent[v];
-            path_flow = min(path_flow, rGraph[u][v]);
+            u = padre[v];
+            flujoRuta = min(flujoRuta, rGraph[u][v]);
         }
-        for (v = t; v != s; v = parent[v])
+        //Actualizamos las capacidades residuales de los bordes del grafo
+        for (v = t; v != s; v = padre[v])
         {
-            u = parent[v];
-            rGraph[u][v] -= path_flow;
-            rGraph[v][u] += path_flow;
+            u = padre[v];
+            rGraph[u][v] -= flujoRuta;
+            rGraph[v][u] += flujoRuta;
         }
-        max_flow += path_flow;
+        //Agregamos el flujo maximo encontrado al flujo maximo final
+        flujoMax += flujoRuta;
     }
     cout << endl
          << "- Funcion 3" << endl;
-    cout << "El flujo maximo es: " << max_flow << endl;
+    cout << "El flujo maximo de informacion es: " << flujoMax << endl;
 }
 
 //Funcion que lee un archivo de texto (recibe el nombre como parametro) y regresa
