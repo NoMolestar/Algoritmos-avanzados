@@ -5,7 +5,7 @@ Luis Armando Salazar Lopez A01114901
 Carlos Moises Chavez Jimenez A01637322
 */
 
-/*La ultima funcion (4) del programa la realizamos en un archivo de python por separado*/
+// La ultima funcion (4) del programa la realizamos en un archivo de python por separado
 
 #include <iostream>
 #include <string>
@@ -87,7 +87,7 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
     {
         if (k != source && recorrido[k] != INF)
         {
-            cout << "node " << source + 1 << " to node " << k + 1 << " : " << recorrido[k] << endl;
+            cout << "De la colonia " << source + 1 << " a la colonia " << k + 1 << " : " << recorrido[k] << "KM de cableado. " << endl;
         }
     }
 }
