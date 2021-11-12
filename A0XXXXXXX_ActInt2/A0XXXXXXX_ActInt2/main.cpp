@@ -83,11 +83,12 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
         count++;
     }
     //imprimir recorrido
+    string alfabeto="ABCDEFGHIJKLMNOPQRSTUVXYZ";
     for (int k = 0; k < n; k++)
     {
         if (k != source && recorrido[k] != INF)
         {
-            cout << "De la colonia " << source + 1 << " a la colonia " << k + 1 << " : " << recorrido[k] << "KM de cableado. " << endl;
+            cout << "De la colonia " << alfabeto[source] << " a la colonia " << alfabeto[k] << " : " << recorrido[k] << "KM de cableado. " << endl;
         }
     }
 }
