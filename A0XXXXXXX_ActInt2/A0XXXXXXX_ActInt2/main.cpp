@@ -83,7 +83,7 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
         count++;
     }
     //imprimir recorrido
-    string alfabeto="ABCDEFGHIJKLMNOPQRSTUVXYZ";
+    string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVXYZ";
     for (int k = 0; k < n; k++)
     {
         if (k != source && recorrido[k] != INF)
@@ -98,91 +98,103 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
 //Complejidad: O(N!)
 void rutaFun2(int n, vector<vector<int>> &distancia)
 {
-    vector<vector<int>> matrizNodos=distancia;
-    bool listo=false;
-    int suma=0;
-    vector<int> nodoVisitado(n,0);
-    vector<vector<int>> solucion(n, vector<int> (n,0));
-    int i=0;
+    vector<vector<int>> matrizNodos = distancia;
+    bool listo = false;
+    int suma = 0;
+    vector<int> nodoVisitado(n, 0);
+    vector<vector<int>> solucion(n, vector<int>(n, 0));
+    int i = 0;
     //int contador=0;
-    while(!listo){
-       // contador++;
-       // cout<<"iteracion num: "<<contador<<endl;
-        if(nodoVisitado[i]<2){
-            int min=INT_MAX;
-            int minPos=INT_MAX;
-            bool visita=false;
-            for(int j=0;j<n;j++){
-                if(i!=j && matrizNodos[i][j]<min && matrizNodos[i][j]>0){
-                    if( (nodoVisitado[i]+nodoVisitado[j])<2 ){
-                        min=matrizNodos[i][j];
-                        minPos=j;
-                        visita=true;
-                       // cout<<"intendo de minimo: "<<min<<endl;
-                    }else if(nodoVisitado[i]+nodoVisitado[j]==2 && suma == ((n*2)-2) ){
-                        listo=true;
-                        min=matrizNodos[i][j];
-                        minPos=j;
-                        visita=true;
+    while (!listo)
+    {
+        // contador++;
+        // cout<<"iteracion num: "<<contador<<endl;
+        if (nodoVisitado[i] < 2)
+        {
+            int min = INT_MAX;
+            int minPos = INT_MAX;
+            bool visita = false;
+            for (int j = 0; j < n; j++)
+            {
+                if (i != j && matrizNodos[i][j] < min && matrizNodos[i][j] > 0)
+                {
+                    if ((nodoVisitado[i] + nodoVisitado[j]) < 2)
+                    {
+                        min = matrizNodos[i][j];
+                        minPos = j;
+                        visita = true;
+                        // cout<<"intendo de minimo: "<<min<<endl;
+                    }
+                    else if (nodoVisitado[i] + nodoVisitado[j] == 2 && suma == ((n * 2) - 2))
+                    {
+                        listo = true;
+                        min = matrizNodos[i][j];
+                        minPos = j;
+                        visita = true;
                     }
                 }
             }
-            if(visita){
+            if (visita)
+            {
                 //establecemos la conexion en el vector de visitas y solucion
-                solucion[i][minPos]=matrizNodos[i][minPos];
-                solucion[minPos][i]=matrizNodos[minPos][i];
+                solucion[i][minPos] = matrizNodos[i][minPos];
+                solucion[minPos][i] = matrizNodos[minPos][i];
 
-                matrizNodos[i][minPos]=0;
-                matrizNodos[minPos][i]=0;
+                matrizNodos[i][minPos] = 0;
+                matrizNodos[minPos][i] = 0;
 
                 nodoVisitado[i]++;
                 nodoVisitado[minPos]++;
 
-                suma+=2;
-                
+                suma += 2;
             }
 
-            if(suma==n*2){
-                listo=true;
+            if (suma == n * 2)
+            {
+                listo = true;
             }
-            i=minPos-1;
+            i = minPos - 1;
         }
 
-
         i++;
-        if(i==n){
-            i=0;
+        if (i == n)
+        {
+            i = 0;
         }
     }
 
-    
     //comprobacion de solucion
-    
-    if(listo){
-        string alfabeto="ABCDEFGHIJKLMNOPQRSTUVXYZ";
-        cout<<"La ruta(TSP) es: "<<endl;
-        int posActual, posAnterior ;
-        posActual=posAnterior=0;
-        
-        for(int i=0;i<n;i++){//for para desplegar todos los caminos
 
-            for(int j=0;j<n;j++){//for para encontrar una ruta en la solucion ya creada
-                if(solucion[posActual][j]>0 && j!=posAnterior && j!=posActual){
-                    cout<<"Desde : colonia "<<alfabeto[posActual]<<" hacia : colonia "<<alfabeto[j]<<" valor: "<<solucion[posActual][j]<<endl;
-                    posAnterior=posActual;
-                    posActual=j;  
-                    break; 
+    if (listo)
+    {
+        string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVXYZ";
+        cout << endl
+             << "- Funcion 2" << endl;
+        cout << "La ruta(TSP) es: " << endl;
+        int posActual, posAnterior;
+        posActual = posAnterior = 0;
+
+        for (int i = 0; i < n; i++)
+        { //for para desplegar todos los caminos
+
+            for (int j = 0; j < n; j++)
+            { //for para encontrar una ruta en la solucion ya creada
+                if (solucion[posActual][j] > 0 && j != posAnterior && j != posActual)
+                {
+                    cout << "Desde : colonia " << alfabeto[posActual] << " hacia : colonia " << alfabeto[j] << " valor: " << solucion[posActual][j] << "KM" << endl;
+                    posAnterior = posActual;
+                    posActual = j;
+                    break;
                 }
             }
         }
-        
-
-    }else{
-        cout<<"Solucion no encontrada"<<endl;
     }
-    
-    //
+    else
+    {
+        cout << "Solucion no encontrada" << endl;
+    }
 
+    //
 }
 
 //Funcion auxiliar que verifica si existe un camino entre el nodo s y el nodo t.
@@ -325,7 +337,7 @@ void leerArchivo(const string &name)
         cableadoFun1(colonias, distancia, i);
     }
 
-    rutaFun2(colonias,distancia);
+    rutaFun2(colonias, distancia);
 
     //Llamamos a la funcion que mostrara el cableado de las colonias
     //rutaFun2(distancia, colonias); //Llamamos a la funcion que muestra la ruta a seguir por el personal
