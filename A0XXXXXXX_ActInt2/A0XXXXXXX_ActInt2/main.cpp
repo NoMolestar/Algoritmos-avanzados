@@ -36,7 +36,7 @@ void imprimir(vector<vector<int>> &final, int m)
 }
 
 //Funcion 1 : Algoritmo Dijkstra
-//Complejidad: O(n^2) donde n es la cantidad de vertices
+//Complejidad: O(n^2) donde n es la cantidad de vertices.
 void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
 {
     //Complejidad: O(n^2) donde n es la cantidad de vertices
@@ -95,7 +95,7 @@ void cableadoFun1(int n, vector<vector<int>> &distancia, int source)
 
 //Algoritmo Agente Viajero
 //cheapest link
-//Complejidad: O(N!)
+//Complejidad: O(n!) siendo n la cantidad de nodos de la matriz.
 void rutaFun2(int n, vector<vector<int>> &distancia)
 {
     vector<vector<int>> matrizNodos = distancia;
