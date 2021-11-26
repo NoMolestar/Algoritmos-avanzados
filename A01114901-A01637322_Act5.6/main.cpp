@@ -1,169 +1,193 @@
 //Actividad 5.6 Implementación de Simulated annealing
-//25 de octubre del 2021
+//25 de noviembre del 2021
+
+//Instituto Tecnológico y de Estudios Superiores de Monterrey
+//Ingeniería en Tecnologías Computacionales
+
 //Luis Armando Salazar Lopez A01114901
 //Carlos Moises Chavez Jimenez A01637322
+//Profesor Gildardo Sánchez Ante
+
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
+#include <math.h>
 #include <algorithm>
+#include <time.h>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
 
 using namespace std;
 
-const int MAX = 999999;
 const int CIUDADES = 128;
+vector<int> ciudades;
+vector<bool> flag(CIUDADES, false);
+vector<vector<int>> distancias;
 
-//Función que imprime la matriz resuelta completa. Recibe la matriz y sus dimensiones
-//Complejidad: O(n) siendo n cada nodo de la matriz.
-void imprimir(vector<vector<int>> &final)
+//Función que imprime el recorrido con menos costo obtenido.
+//Complejidad: O(2n) siendo n el número de ciudades.
+void imprimir(vector<int> &final)
 {
-    for (int i = 0; i < CIUDADES; i++)
+    cout << "Ciudad origen\t"
+         << "Ciudad destino\t"
+         << "Costo" << endl;
+    for (int i = 0; i < CIUDADES - 1; i++)
     {
-        for (int j = 0; j < CIUDADES; j++)
-        {
-            cout << final[i][j] << " ";
-        }
-        cout << endl;
+        cout << final[i] << "\t\t" << final[i + 1] << "\t\t" << distancias[final[i]][final[i + 1]] << endl;
     }
+    cout << final[127] << "\t\t" << final[0] << "\t\t" << distancias[final[127]][final[0]] << endl;
+    cout << endl;
 }
 
-//Algoritmo Agente Viajero
-//cheapest link
-//Complejidad: O(n!) siendo n la cantidad de nodos de la matriz.
-void simulatedA(vector<vector<int>> &distancia)
+//Funcion que obtiene el costo del camino propuesto por el vector ciudades.
+//Complejidad: O(2n) siendo n el número de ciudades.
+int costo(vector<int> &costo)
 {
-    vector<vector<int>> matrizNodos = distancia;
-    bool listo = false;
-    int suma = 0;
-    vector<int> nodoVisitado(CIUDADES, 0);
-    vector<vector<int>> solucion(CIUDADES, vector<int>(CIUDADES, 0));
-    int i = 0;
-    //int contador=0;
-    while (!listo)
+    long c = 0;
+    for (int i = 0; i < CIUDADES - 1; i++)
     {
-        // contador++;
-        // cout<<"iteracion num: "<<contador<<endl;
-        if (nodoVisitado[i] < 2)
-        {
-            int min = INT_MAX;
-            int minPos = INT_MAX;
-            bool visita = false;
-            for (int j = 0; j < CIUDADES; j++)
-            {
-                if (i != j && matrizNodos[i][j] < min && matrizNodos[i][j] > 0)
-                {
-                    if ((nodoVisitado[i] + nodoVisitado[j]) < 2)
-                    {
-                        min = matrizNodos[i][j];
-                        minPos = j;
-                        visita = true;
-                        // cout<<"intendo de minimo: "<<min<<endl;
-                    }
-                    else if (nodoVisitado[i] + nodoVisitado[j] == 2 && suma == ((CIUDADES * 2) - 2))
-                    {
-                        listo = true;
-                        min = matrizNodos[i][j];
-                        minPos = j;
-                        visita = true;
-                    }
-                }
-            }
-            if (visita)
-            {
-                //establecemos la conexion en el vector de visitas y solucion
-                solucion[i][minPos] = matrizNodos[i][minPos];
-                solucion[minPos][i] = matrizNodos[minPos][i];
-
-                matrizNodos[i][minPos] = 0;
-                matrizNodos[minPos][i] = 0;
-
-                nodoVisitado[i]++;
-                nodoVisitado[minPos]++;
-
-                suma += 2;
-            }
-
-            if (suma == CIUDADES * 2)
-            {
-                listo = true;
-            }
-            i = minPos - 1;
-        }
-
-        i++;
-        if (i == CIUDADES)
-        {
-            i = 0;
-        }
+        //Se obtiene la distancia entre las dos ciudades obtenidas
+        int x1 = costo[i];
+        int x2 = costo[i + 1];
+        c += distancias[x1][x2];
     }
+    //Agrego la distancia de la colonia final a la inicial
+    c += distancias[costo[127]][costo[0]];
+    return c;
+}
 
-    //comprobacion de solucion
+//Función que obtiene un numero random de entre 0 y el número de ciudades - 1
+//Y las intercambia dentro del vector del recorrido.
+//Complejidad O(1)
+void vecinos(vector<int> &aux)
+{
+    //Obtenemos número random de entre 0 y 127.
+    int pick1 = rand() % CIUDADES;
+    int pick2 = rand() % CIUDADES;
+    swap(aux[pick1], aux[pick2]);
+}
 
-    /*if (listo)
+//Función que llena el arreglo del recorrido por las ciudades con las mismas ciudades
+//acomodadas de manera random.
+//Complejidad O(2n) siendo n el número de ciudades.
+void llenarArreglo()
+{
+    srand(time(0));
+    int n = 0;
+    for (int i = 0; i < CIUDADES; ++i)
     {
-        string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVXYZ";
-        cout << endl
-             << "- Funcion 2" << endl;
-        cout << "La ruta(TSP) es: " << endl;
-        int posActual, posAnterior;
-        posActual = posAnterior = 0;
-
-        for (int i = 0; i < CIUDADES; i++)
-        { //for para desplegar todos los caminos
-
-            for (int j = 0; j < CIUDADES; j++)
-            { //for para encontrar una ruta en la solucion ya creada
-                if (solucion[posActual][j] > 0 && j != posAnterior && j != posActual)
-                {
-                    cout << "Desde : colonia " << alfabeto[posActual] << " hacia : colonia " << alfabeto[j] << " valor: " << solucion[posActual][j] << "KM" << endl;
-                    posAnterior = posActual;
-                    posActual = j;
-                    break;
-                }
-            }
-        }
+        //Obtenemos la ciudad random y verificamos si ya fue visitada
+        do
+        {
+            n = rand() % CIUDADES;
+            //Si ya fue visitada, entonces obtenemos otra ciudad random.
+        } while (flag[n] == true);
+        //agregamos la ciudad a nuestro camino y la marcamos como visitida.
+        ciudades.push_back(n);
+        flag[n] = true;
     }
-    else
-    {
-        cout << "Solucion no encontrada" << endl;
-    }*/
-
-    //
 }
 
 //Funcion que lee y guarda los elementos encontrados dentro del archivo csv
-//Complejidad: O(n): siendo n cada elemento dentro del archivo csv
+//Complejidad: O(n^2): siendo n el número de ciudades.
 void lecturaArchivo(string nombreFile)
 {
     ifstream archivo(nombreFile);
     string linea;
     string aux;
     vector<int> auxCiudades;
-    vector<vector<int>> distancias;
     char delimitador = ',';
-    // Leemos la primer línea para descartarla, pues es el encabezado
-    getline(archivo, linea);
-    // Leemos todas las líneas
+    // Leemos cada fila del archivo.
     while (getline(archivo, linea))
     {
-        stringstream stream(linea); // Convertir la cadena a un stream
+        // Convertir la fila a un stream
+        stringstream stream(linea);
         for (int i = 0; i < CIUDADES; i++)
         {
+            //Dividimos la fila por comas y guardamos cada valor en nuestra matriz.
             getline(stream, aux, delimitador);
             auxCiudades.push_back(atoi(aux.c_str()));
         }
         distancias.push_back(auxCiudades);
         auxCiudades.clear();
     }
-    simulatedA(distancias);
     //imprimir(distancias);
     archivo.close();
 }
 
 int main()
 {
+    srand(time(NULL));
+    //Maxima distancia: 3496
+    //Minima distancia: 25
+    //Calcularemos el valor de la temperatura con la formula dada -delta / ln(0.7)
+    int delta = 3496 - 25;
+    float temperatura = -delta / log(.7);
+    cout << "Temperatura inicial: " << temperatura << endl;
     string nombreFile = "cities_128.csv";
+    string archivoSalida = "tabla_iteraciones.txt";
+    ofstream archivo;
+    //Guardamos los valores del archivo .csv en nuestra matriz.
     lecturaArchivo(nombreFile);
+    //Obtenemos nuestro primer path
+    llenarArreglo();
+    //Sacamos el costo del path obtenido
+    int costoAct = costo(ciudades);
+    cout << "El costo del camino inicial es: " << costoAct << endl
+         << endl;
+    //Abrimos y comenzamos a escribir en nuestro archivo de texto.
+    archivo.open(archivoSalida.c_str(), fstream::out);
+    archivo << "Luis Armando Salazar Lopez A01114901" << endl;
+    archivo << "Carlos Moisés Chávez Jiménez A01637322" << endl
+            << endl;
+    archivo << "En este archivo de texto mostraremos la tabla con los datos obtenidos de cada iteracion." << endl
+            << endl;
+    archivo << "La temperatura inicial es " << temperatura << endl;
+    archivo << "El costo del camino inicial es " << costoAct << endl
+            << endl;
+    archivo << "Iteración\t"
+            << "Costo\t\t"
+            << "Temperatura" << endl;
+    //Realizamos las iteraciones que queramos para buscar el mejor path con el menor costo.
+    for (int i = 0; i < 100000; i++)
+    {
+        //Obtenemos un numero random entre 0 y 1
+        float rndm = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        //Obtenemos nuestra diferencia con la formula dada
+        float diferencia = exp(-delta / temperatura);
+        vector<int> aux = ciudades;
+        //Modificamos nuestro path para ver si encontramos un mejor camino
+        vecinos(aux);
+        //Sacamos el costo del nuevo path obtenido
+        int costoNew = costo(aux);
+        //Si el costo es menor, entonces dejamos al nuevo path, sino, vamos a utilizar otra condicionante
+        if (costoNew < costoAct)
+        {
+            ciudades = aux;
+            costoAct = costoNew;
+        }
+        else
+        {
+            delta = costoNew - costoAct;
+            //Si nuestra diferencia es mayor al numero random, entonces permitimos hacer el cambio
+            if (diferencia > rndm)
+            {
+                ciudades = aux;
+                costoAct = costoNew;
+            }
+        }
+        //Bajamos la temperatura y la guardamos junto con el costo en el archivo de texto.
+        temperatura *= 0.99;
+        archivo << i + 1 << "\t\t\t" << costoAct << "\t\t" << temperatura << endl;
+    }
+    archivo << endl
+            << "La temperatura final es " << temperatura << endl;
+    archivo << "El costo del camino final es " << costoAct;
+    //Cerramos el archivo de texto e imprimimos nuestro path final
+    archivo.close();
+    imprimir(ciudades);
+    cout << "Temperatura final: " << temperatura << endl;
+    cout << "El costo del camino final es: " << costoAct << endl;
     return 0;
 }
